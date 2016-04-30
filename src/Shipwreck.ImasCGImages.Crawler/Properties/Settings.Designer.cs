@@ -47,5 +47,29 @@ namespace Shipwreck.ImasCGImages.Crawler.Properties {
                 this["IdolListUrl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("120")]
+        public int CommandTimeout {
+            get {
+                return ((int)(this["CommandTimeout"]));
+            }
+            set {
+                this["CommandTimeout"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("500")]
+        public int RequestWait {
+            get {
+                return ((int)(this["RequestWait"]));
+            }
+            set {
+                this["RequestWait"] = value;
+            }
+        }
     }
 }

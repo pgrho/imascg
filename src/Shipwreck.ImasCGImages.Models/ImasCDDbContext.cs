@@ -25,7 +25,7 @@ namespace Shipwreck.ImasCGImages.Models
             var idolDictionary = idols.ToDictionary(_ => _.Id);
 
             var dbIdols = await Idols.ToDictionaryAsync(_ => _.Id);
-var c=0;
+            var c = 0;
 
             foreach (var kv in idolDictionary)
             {
@@ -39,11 +39,12 @@ var c=0;
                 else
                 {
                     Idols.Add(kv.Value);
-        c++;        }
+                    c++;
+                }
             }
 
             await SaveChangesAsync();
-            
+
             return c;
         }
     }

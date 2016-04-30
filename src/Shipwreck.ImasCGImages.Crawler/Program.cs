@@ -18,30 +18,93 @@ namespace Shipwreck.ImasCGImages.Crawler
     {
         private static void Main(string[] args)
         {
-            var cb = new SqlConnectionStringBuilder();
-            cb.ConnectionString = Settings.Default.ConnectionString;
+            string cs;
+            int timeout, wait;
 
-            Console.Write("Data Source (default:{0}):", cb.DataSource);
-            cb.DataSource = ReadLine() ?? cb.DataSource;
+            var ir = new Regex("^[-/]i(nteractive)?$", RegexOptions.IgnoreCase);
+            var isInteractive = args.Any(ir.IsMatch);
 
-            Console.Write("Initial Catalog (default:{0}):", cb.InitialCatalog);
-            cb.InitialCatalog = ReadLine() ?? cb.InitialCatalog;
+            if (isInteractive)
+            {
+                var cb = new SqlConnectionStringBuilder();
+                cb.ConnectionString = Settings.Default.ConnectionString;
 
-            Console.Write("Integrated Security (default:{0}):", cb.IntegratedSecurity);
-            cb.IntegratedSecurity = Regex.IsMatch(ReadLine() ?? cb.IntegratedSecurity.ToString(), "^(t|true|y|yes)$", RegexOptions.IgnoreCase);
+                Console.Write("Data Source (default:{0}):", cb.DataSource);
+                cb.DataSource = ReadLine() ?? cb.DataSource;
 
-            Console.Write("User ID (default:{0}):", cb.UserID);
-            cb.UserID = ReadLine() ?? cb.UserID;
+                Console.Write("Initial Catalog (default:{0}):", cb.InitialCatalog);
+                cb.InitialCatalog = ReadLine() ?? cb.InitialCatalog;
 
-            Console.Write("Password (default:{0}):", string.IsNullOrEmpty(cb.Password) ? "" : "****");
-            cb.Password = ReadLine() ?? cb.Password;
+                Console.Write("Integrated Security (default:{0}):", cb.IntegratedSecurity);
+                cb.IntegratedSecurity = Regex.IsMatch(ReadLine() ?? cb.IntegratedSecurity.ToString(), "^(t|true|y|yes|1)$", RegexOptions.IgnoreCase);
 
-            var cs = cb.ConnectionString;
+                Console.Write("User ID (default:{0}):", cb.UserID);
+                cb.UserID = ReadLine() ?? cb.UserID;
 
-            Settings.Default.ConnectionString = cs;
-            Settings.Default.Save();
+                Console.Write("Password (default:{0}):", string.IsNullOrEmpty(cb.Password) ? "" : "****");
+                cb.Password = ReadLine() ?? cb.Password;
 
-            Task.Run(() => new Program(cs).MainAsync()).Wait();
+                cs = cb.ConnectionString;
+
+                timeout = Settings.Default.CommandTimeout;
+                Console.Write("Timeout[s] (default:{0}):", timeout);
+                timeout = int.Parse(ReadLine() ?? timeout.ToString());
+
+                wait = Settings.Default.RequestWait;
+                Console.Write("Wait[ms] (default:{0}):", wait);
+                wait = int.Parse(ReadLine() ?? wait.ToString());
+
+                Settings.Default.ConnectionString = cs;
+                Settings.Default.CommandTimeout = timeout;
+                Settings.Default.RequestWait = wait;
+                Settings.Default.Save();
+            }
+            else
+            {
+                cs = GetArg(args, "c(s|onnectionstring)?") ?? (string.IsNullOrEmpty(Settings.Default.ConnectionString) ? null : Settings.Default.ConnectionString);
+
+                if (cs == null)
+                {
+                    var cb = new SqlConnectionStringBuilder();
+                    cb.DataSource = GetArg(args, "(d|ds|datasource)");
+                    cb.InitialCatalog = GetArg(args, "(t|target|ic|initialcatalog)");
+                    cb.IntegratedSecurity = Regex.IsMatch(GetArg(args, "(is|security|integratedsecurity)") ?? string.Empty, "^(1|y|yes|t|true)$", RegexOptions.IgnoreCase);
+                    cb.UserID = GetArg(args, "(u|user|userid)");
+                    cb.Password = GetArg(args, "(p|pw|password)");
+
+                    cs = cb.ConnectionString;
+                }
+
+                timeout = int.Parse(GetArg(args, "(to|timeout)") ?? Settings.Default.CommandTimeout.ToString());
+                wait = int.Parse(GetArg(args, "w(ait)?") ?? Settings.Default.RequestWait.ToString());
+            }
+
+            Task.Run(() => new Program(cs, timeout, wait).MainAsync()).Wait();
+        }
+
+        private static string GetArg(string[] args, string corePattern)
+        {
+            var csr = new Regex("^[-/]" + corePattern + "(|:$)", RegexOptions.IgnoreCase);
+
+            var csp = args.LastOrDefault(csr.IsMatch);
+            if (csp == null)
+            {
+                return null;
+            }
+
+            var m = Regex.Match(csp, "^[-/]" + corePattern + ":");
+            if (m.Success)
+            {
+                return csp.Substring(m.Length);
+            }
+
+            var i = Array.LastIndexOf(args, csp);
+            if (i == args.Length - 1)
+            {
+                return null;
+            }
+
+            return args[i + 1];
         }
 
         private static string ReadLine()
@@ -55,12 +118,15 @@ namespace Shipwreck.ImasCGImages.Crawler
         }
 
         private readonly string _ConnectionString;
-        private readonly bool _SkipImageList = true;
+        private readonly bool _ForceUpdateImages;
+        private readonly int _Timeout = 120;
         private readonly int Wait = 500;
 
-        private Program(string connectionString)
+        private Program(string connectionString, int timeout, int wait)
         {
             this._ConnectionString = connectionString;
+            _Timeout = timeout;
+            Wait = wait;
         }
 
         private async Task MainAsync()
@@ -69,11 +135,11 @@ namespace Shipwreck.ImasCGImages.Crawler
             var idols = await Idol.DownloadIdolsAsync();
 
             Console.WriteLine("アイドルの一覧を保存しています。");
-            await SaveIdolsAsync(idols);
+            var ic = await SaveIdolsAsync(idols);
 
             await Task.Delay(Wait);
 
-            if (!_SkipImageList)
+            if (ic > 0 || _ForceUpdateImages)
             {
                 var d = new HashSet<Tuple<string, string>>();
                 for (var i = 0; i < idols.Count; i++)
@@ -127,7 +193,8 @@ namespace Shipwreck.ImasCGImages.Crawler
         {
             using (var db = new ImasCDDbContext(_ConnectionString))
             {
-          return      await db.SaveIdolsAsync(idols);
+                db.Database.CommandTimeout = _Timeout;
+                return await db.SaveIdolsAsync(idols);
             }
         }
 
@@ -136,6 +203,7 @@ namespace Shipwreck.ImasCGImages.Crawler
             var imgDic = images.ToDictionary(_ => _.Hash);
             using (var db = new ImasCDDbContext(_ConnectionString))
             {
+                db.Database.CommandTimeout = _Timeout;
                 var dbImages = await db.IdolImages.ToDictionaryAsync(_ => _.Hash);
 
                 foreach (var kv in imgDic)
@@ -182,16 +250,19 @@ namespace Shipwreck.ImasCGImages.Crawler
         {
             using (var db = new ImasCDDbContext(_ConnectionString))
             {
+                db.Database.CommandTimeout = _Timeout;
                 var tc = await db.IdolImages.CountAsync();
                 var dc = await db.IdolImageData.CountAsync(_ => _.Data != null);
                 return tc * types.Length - dc;
             }
         }
+
         private async Task<IdolImage> GetUnaquiredImageAsync(IdolImageDataType[] types)
         {
             var c = types.Length;
             using (var db = new ImasCDDbContext(_ConnectionString))
             {
+                db.Database.CommandTimeout = _Timeout;
                 return await db.IdolImages.Include(_ => _.Idol)
                                 .FirstOrDefaultAsync(_ => db.IdolImageData.Count(h => h.Hash == _.Hash) < c);
             }
@@ -201,6 +272,7 @@ namespace Shipwreck.ImasCGImages.Crawler
         {
             using (var db = new ImasCDDbContext(_ConnectionString))
             {
+                db.Database.CommandTimeout = _Timeout;
                 return await db.IdolImageData.AnyAsync(_ => _.Hash == hash && _.Type == type);
             }
         }
@@ -226,6 +298,7 @@ namespace Shipwreck.ImasCGImages.Crawler
         {
             using (var db = new ImasCDDbContext(_ConnectionString))
             {
+                db.Database.CommandTimeout = _Timeout;
                 var d = await db.IdolImageData.FirstOrDefaultAsync(_ => _.Hash == hash && _.Type == type);
 
                 if (d == null)

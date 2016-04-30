@@ -1,4 +1,5 @@
 using Shipwreck.ImasCGImages.Models;
+using Shipwreck.ImasCGImages.WebApi.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -6,11 +7,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
-namespace Shipwreck.ImasCGImages.WebApi.Controllers
+namespace Shipwreck.ImasCGImages.WebApi.Models
 {
-    public enum NameOperator
+    public class JsonIdolImageResult
     {
-        Equal = 0,
-        Contains = 1,
+        public List<JsonIdolImage> Items { get; set; }
     }
 }
