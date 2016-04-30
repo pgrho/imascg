@@ -7,11 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
-
 namespace Shipwreck.ImasCGImages.WebApi.Models
 {
-    using SUN_SIGN = SunSign;
-
     public class JsonIdolImage
     {
         /// <summary>
@@ -38,7 +35,7 @@ namespace Shipwreck.ImasCGImages.WebApi.Models
             Hip = model.SpecialHip ?? $"{model.Hip}";
             Age = model.SpecialAge ?? $"{model.Age}歳";
             Birthday = model.SpecialBirthday ?? $"{model.BirthDay}月{model.BirthMonth}日";
-            SunSign = model.SpecialSunSign ?? GetSunSign(model.SunSign);
+            SunSign = model.SpecialSunSign ?? model.SunSign.GetDisplayName();
             Birthplace = model.Birthplace;
             Hobby = model.Hobby;
             Handedness = model.Handedness.ToString();
@@ -87,50 +84,5 @@ namespace Shipwreck.ImasCGImages.WebApi.Models
         public string IconImageUrl { get; set; }
 
         #endregion Url
-
-        private string GetSunSign(SunSign value)
-        {
-            switch (value)
-            {
-                case SUN_SIGN.Capricorn:
-                    return "山羊座";
-
-                case SUN_SIGN.Aquarian:
-                    return "水瓶座";
-
-                case SUN_SIGN.Piscean:
-                    return "魚座";
-
-                case SUN_SIGN.Arian:
-                    return "牡羊座";
-
-                case SUN_SIGN.Taurean:
-                    return "牡牛座";
-
-                case SUN_SIGN.Geminian:
-                    return "双子座";
-
-                case SUN_SIGN.Cancerian:
-                    return "蟹座";
-
-                case SUN_SIGN.Leo:
-                    return "獅子座";
-
-                case SUN_SIGN.Virgin:
-                    return "乙女座";
-
-                case SUN_SIGN.Libran:
-                    return "天秤座";
-
-                case SUN_SIGN.Scorpio:
-                    return "蠍座";
-
-                case SUN_SIGN.Sagittarian:
-                    return "射手座";
-
-                default:
-                    return null;
-            }
-        }
     }
 }

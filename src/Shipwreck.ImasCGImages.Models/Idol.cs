@@ -117,7 +117,8 @@ namespace Shipwreck.ImasCGImages.Models
 
                 SetAge(img, tr3[0].InnerText?.Trim(), errorHandler);
                 SetBirthday(img, tr3[1].InnerText?.Trim(), errorHandler);
-                img.SunSign = GetSunSign(tr3[2].InnerText, errorHandler);
+                SetSunSign(img, tr3[2].InnerText?.Trim(), errorHandler);
+
                 img.Birthplace = tr3[3].InnerText.Trim();
                 img.Hobby = tr3[4].InnerText.Trim();
                 img.Handedness = GetHandedness(tr3[5].InnerText, errorHandler);
@@ -315,6 +316,19 @@ namespace Shipwreck.ImasCGImages.Models
             {
                 image.SpecialBirthday = value;
                 errorHandler?.Invoke(nameof(image.BirthMonth), value);
+            }
+        }
+
+        private void SetSunSign(IdolImage img, string sunSign, Action<string, string> errorHandler)
+        {
+            var v = GetSunSign(sunSign, errorHandler);
+            if (v != SunSign.Unknown)
+            {
+                img.SunSign = v;
+            }
+            else if (!string.IsNullOrEmpty(sunSign))
+            {
+                img.SpecialSunSign = sunSign;
             }
         }
 

@@ -43,20 +43,16 @@ namespace Shipwreck.ImasCGImages.Models
         public float Waist { get; set; }
         public float Hip { get; set; }
 
-
         [StringLength(32)]
         public string SpecialBust { get; set; }
 
-
         [StringLength(32)]
         public string SpecialWaist { get; set; }
-
 
         [StringLength(32)]
         public string SpecialHip { get; set; }
 
         public float Age { get; set; }
-
 
         [StringLength(32)]
         public string SpecialAge { get; set; }
@@ -71,7 +67,7 @@ namespace Shipwreck.ImasCGImages.Models
         public SunSign SunSign { get; set; }
 
         [StringLength(32)]
-        public string SpecialSunSign{ get; set; }
+        public string SpecialSunSign { get; set; }
 
         [StringLength(64)]
         public string Birthplace { get; set; }
@@ -80,20 +76,5 @@ namespace Shipwreck.ImasCGImages.Models
         public string Hobby { get; set; }
 
         public Handedness Handedness { get; set; }
-
-        //public string ImageUrl
-        //    => $"http://gamedb.squares.net/idolmaster/image_sp/card/l/{Hash}.jpg";
-
-        //public string NoFrameImageUrl
-        //    => $"http://gamedb.squares.net/idolmaster/image_sp/card/l_noframe/{Hash}.jpg";
-
-        //public string QuestImageUrl
-        //    => $"http://gamedb.squares.net/idolmaster/image_sp/card/quest/{Hash}.jpg";
-
-        //public string LSImageUrl
-        //    => $"http://gamedb.squares.net/idolmaster/image_sp/card/ls/{Hash}.jpg";
-
-        //public string XSImageUrl
-        //    => $"http://gamedb.squares.net/idolmaster/image_sp/card/xs/{Hash}.jpg";
     }
 }

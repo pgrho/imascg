@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BloodType.cs" />
+    <Compile Include="EnumExtensions.cs" />
     <Compile Include="Handedness.cs" />
     <Compile Include="Idol.cs" />
     <Compile Include="IdolImage.cs" />
