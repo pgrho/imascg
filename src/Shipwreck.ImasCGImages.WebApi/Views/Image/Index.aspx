@@ -102,6 +102,10 @@
                         <a data-bind="attr: { href: ImageUrl }" href="#" target="_blank">
                             <img src="#" data-bind="attr: { src: IconImageUrl }" />
                         </a>
+                        <br />
+                        <a data-bind="attr:{ href: FramelessImageUrl }" href="#" target="_blank">FL</a>
+                        <a data-bind="attr:{ href: QuestImageUrl }" href="#" target="_blank">QS</a>
+                        <a data-bind="attr:{ href: BannerImageUrl }" href="#" target="_blank">LS</a>
                     </td>
                     <td>
                         <span data-bind="text: Rarity"></span>

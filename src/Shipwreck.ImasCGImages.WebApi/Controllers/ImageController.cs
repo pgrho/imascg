@@ -92,8 +92,37 @@ namespace Shipwreck.ImasCGImages.WebApi.Controllers
                 }
                 var list = await q.Include(_ => _.Idol).Take(Math.Max(count, 1)).ToListAsync();
 
+                var types = new[]
+                {
+                    IdolImageDataType.Framed,
+                    IdolImageDataType.Frameless,
+                    IdolImageDataType.Quest,
+                    IdolImageDataType.LS,
+                    IdolImageDataType.XS
+                };
+
+                var hs = list.Select(_ => _.Hash);
+                var ie = await db.IdolImageData.Where(_ => hs.Contains(_.Hash) && types.Contains(_.Type)).ToDictionaryAsync(_ => new { _.Hash, _.Type }, _ => _.Data != null);
+
                 var jl = new List<JsonIdolImage>(list.Count);
-                jl.AddRange(list.Select(_ => new JsonIdolImage(_, this)));
+
+                var ub = new UriBuilder(Request.Url);
+                ub.Query = null;
+
+                foreach (var i in list)
+                {
+                    var j = new JsonIdolImage(i);
+                    foreach (var t in types)
+                    {
+                        bool b;
+                        if (!ie.TryGetValue(new { j.Hash, Type = t }, out b) || b)
+                        {
+                            ub.Path = Url.Action(nameof(Image), "Image", new { hash = j.Hash, type = t });
+                            j.SetUrl(t, ub.Uri.ToString());
+                        }
+                    }
+                    jl.Add(j);
+                }
 
                 return Json(new JsonIdolImageResult()
                 {
@@ -147,15 +176,6 @@ namespace Shipwreck.ImasCGImages.WebApi.Controllers
                 }
                 return File(data, "image/jpeg");
             }
-        }
-
-        internal static Uri GetImageUri(Controller controller, string hash, IdolImageDataType type)
-        {
-            var ub = new UriBuilder(controller.Request.Url);
-            ub.Query = null;
-
-            ub.Path = controller.Url.Action(nameof(Image), "Image", new { hash, type });
-            return ub.Uri;
         }
     }
 }

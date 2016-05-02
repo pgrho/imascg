@@ -18,7 +18,7 @@ namespace Shipwreck.ImasCGImages.WebApi.Models
         {
         }
 
-        internal JsonIdolImage(IdolImage model, Controller controller)
+        internal JsonIdolImage(IdolImage model)
         {
             Headline = model.Headline;
             Name = model.Idol?.Name;
@@ -39,12 +39,6 @@ namespace Shipwreck.ImasCGImages.WebApi.Models
             Birthplace = model.Birthplace;
             Hobby = model.Hobby;
             Handedness = model.Handedness.ToString();
-
-            ImageUrl = ImageController.GetImageUri(controller, Hash, IdolImageDataType.Framed).ToString();
-            FramelessImageUrl = ImageController.GetImageUri(controller, Hash, IdolImageDataType.Frameless).ToString();
-            QuestImageUrl = ImageController.GetImageUri(controller, Hash, IdolImageDataType.Quest).ToString();
-            BannerImageUrl = ImageController.GetImageUri(controller, Hash, IdolImageDataType.LS).ToString();
-            IconImageUrl = ImageController.GetImageUri(controller, Hash, IdolImageDataType.XS).ToString();
         }
 
         public string Headline { get; set; }
@@ -82,6 +76,50 @@ namespace Shipwreck.ImasCGImages.WebApi.Models
         public string QuestImageUrl { get; set; }
         public string BannerImageUrl { get; set; }
         public string IconImageUrl { get; set; }
+
+        public string GetUrl(IdolImageDataType type)
+        {
+            switch (type)
+            {
+                case IdolImageDataType.Framed:
+                    return ImageUrl;
+                case IdolImageDataType.Frameless:
+                    return FramelessImageUrl;
+                case IdolImageDataType.Quest:
+                    return QuestImageUrl;
+                case IdolImageDataType.LS:
+                    return BannerImageUrl;
+                case IdolImageDataType.XS:
+                    return IconImageUrl;
+            }
+            return null;
+        }
+
+        public void SetUrl(IdolImageDataType type, string value)
+        {
+            switch (type)
+            {
+                case IdolImageDataType.Framed:
+                    ImageUrl = value;
+                    break;
+
+                case IdolImageDataType.Frameless:
+                    FramelessImageUrl = value;
+                    break;
+
+                case IdolImageDataType.Quest:
+                    QuestImageUrl = value;
+                    break;
+
+                case IdolImageDataType.LS:
+                    BannerImageUrl = value;
+                    break;
+
+                case IdolImageDataType.XS:
+                    IconImageUrl = value;
+                    break;
+            }
+        }
 
         #endregion Url
     }
