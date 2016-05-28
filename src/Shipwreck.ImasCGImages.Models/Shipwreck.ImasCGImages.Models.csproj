@@ -58,13 +58,17 @@
     <Compile Include="IdolRarity.cs" />
     <Compile Include="IdolType.cs" />
     <Compile Include="ImasCDDbContext.cs" />
+    <Compile Include="JsonIdolImage.cs" />
+    <Compile Include="JsonIdolImageResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="SearchCondition.cs" />
     <Compile Include="SunSign.cs" />
+    <Compile Include="TextOperator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

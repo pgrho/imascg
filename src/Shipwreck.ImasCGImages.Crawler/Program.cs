@@ -118,7 +118,7 @@ namespace Shipwreck.ImasCGImages.Crawler
         }
 
         private readonly string _ConnectionString;
-        private readonly bool _ForceUpdateImages;
+        private readonly bool _ForceUpdateImages = false;
         private readonly int _Timeout = 120;
         private readonly int Wait = 500;
 

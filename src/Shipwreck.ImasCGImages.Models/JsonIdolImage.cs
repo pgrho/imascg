@@ -1,13 +1,10 @@
-using Shipwreck.ImasCGImages.Models;
-using Shipwreck.ImasCGImages.WebApi.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Mvc;
 
-namespace Shipwreck.ImasCGImages.WebApi.Models
+namespace Shipwreck.ImasCGImages.Models
 {
     public class JsonIdolImage
     {
@@ -18,7 +15,7 @@ namespace Shipwreck.ImasCGImages.WebApi.Models
         {
         }
 
-        internal JsonIdolImage(IdolImage model)
+        public JsonIdolImage(IdolImage model)
         {
             Headline = model.Headline;
             Name = model.Idol?.Name;

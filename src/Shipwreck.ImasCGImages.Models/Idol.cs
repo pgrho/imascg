@@ -209,8 +209,6 @@ namespace Shipwreck.ImasCGImages.Models
             }
         }
 
-        private HashSet<string> _UnknownNumber;
-
         private float GetNumber(string value, Action<string, string> errorHandler)
         {
             var v = (value ?? string.Empty).Trim().ToLowerInvariant().TrimEnd('k', 'g', 'c', 'm', '才', '歳');

@@ -10,7 +10,7 @@
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/knockout-3.4.0.js") %>"></script>
 </head>
 <body>
-    <form action="<%= Url.Action("Search", "Image") %>" method="get" target="rawJson">
+    <form action="<%= Url.Action("search", "api") %>" method="get" target="rawJson">
     <fieldset>
         <legend>ヘッドライン</legend>
         <label for="headline">headline</label>
