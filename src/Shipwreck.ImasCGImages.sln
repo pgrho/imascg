@@ -9,6 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shipwreck.ImasCGImages.Craw
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shipwreck.ImasCGImages.WebApi", "Shipwreck.ImasCGImages.WebApi\Shipwreck.ImasCGImages.WebApi.csproj", "{2C8FF8E3-60F8-4753-AB18-E490AA046407}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{A19A049C-95E6-4A87-A6D8-86D6B04CCF85}"
+	ProjectSection(SolutionItems) = preProject
+		..\tool\nuget\clean_nupkg.bat = ..\tool\nuget\clean_nupkg.bat
+		..\tool\nuget\nuget.exe = ..\tool\nuget\nuget.exe
+		..\tool\nuget\NuGetPublish.bat = ..\tool\nuget\NuGetPublish.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
