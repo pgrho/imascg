@@ -67,6 +67,12 @@ namespace Shipwreck.ImasCGImages.WebApi.Controllers
 
                 var ub = new UriBuilder(vs?.FirstOrDefault() ?? Request.RequestUri.ToString());
                 ub.Query = null;
+                var vpr = RequestContext.VirtualPathRoot;
+
+                if(vpr?.EndsWith("/")==true )
+                {
+                    vpr = vpr.Substring(0, vpr.Length - 1);
+                }
 
                 foreach (var i in list)
                 {
@@ -76,7 +82,7 @@ namespace Shipwreck.ImasCGImages.WebApi.Controllers
                         bool b;
                         if (!ie.TryGetValue(new { j.Hash, Type = t }, out b) || b)
                         {
-                            ub.Path = $"{RequestContext.VirtualPathRoot}i/{t}/{j.Hash}.jpg";
+                            ub.Path = $"{vpr}/i/{t}/{j.Hash}.jpg";
                             j.SetUrl(t, ub.Uri.ToString());
                         }
                     }
