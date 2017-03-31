@@ -65,7 +65,9 @@ namespace Shipwreck.ImasCGImages.WebApi.Controllers
                 IEnumerable<string> vs;
                 Request.Headers.TryGetValues("X-Original-URL", out vs);
 
-                var ub = new UriBuilder(vs?.FirstOrDefault() ?? Request.RequestUri.ToString());
+                var ou = vs?.Where(_ => _?.Length > 0).FirstOrDefault();
+
+                var ub = new UriBuilder(string.IsNullOrEmpty(ou) ? Request.RequestUri : new Uri(Request.RequestUri, ou));
                 ub.Query = null;
                 var vpr = RequestContext.VirtualPathRoot;
 
