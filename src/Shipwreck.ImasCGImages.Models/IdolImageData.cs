@@ -53,7 +53,7 @@ namespace Shipwreck.ImasCGImages.Models
                     return null;
             }
 
-            return $"http://gamedb.squares.net/idolmaster/image_sp/card/{s}/{hash}.jpg";
+            return $"http://imas.gamedbs.jp/cg/image_sp/card/{s}/{hash}.jpg";
         }
     }
 }

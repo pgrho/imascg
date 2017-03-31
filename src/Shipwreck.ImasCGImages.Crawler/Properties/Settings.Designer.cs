@@ -37,8 +37,7 @@ namespace Shipwreck.ImasCGImages.Crawler.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://gamedb.squares.net/idolmaster/?name=&attr=all&age=all&height=all&weight=al" +
-            "l&blood=all&arm=all")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://imas.gamedbs.jp/cg/")]
         public string IdolListUrl {
             get {
                 return ((string)(this["IdolListUrl"]));
@@ -69,6 +68,18 @@ namespace Shipwreck.ImasCGImages.Crawler.Properties {
             }
             set {
                 this["RequestWait"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ForceUpdateList {
+            get {
+                return ((bool)(this["ForceUpdateList"]));
+            }
+            set {
+                this["ForceUpdateList"] = value;
             }
         }
     }

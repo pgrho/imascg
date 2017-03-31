@@ -60,7 +60,8 @@ namespace Shipwreck.ImasCGImages.Models
                 var ng = m.Groups["n"];
                 var kg = m.Groups["k"];
 
-                if (int.TryParse(href.Split('=').Last(), out id) && ng.Success && kg.Success)
+                var url = Regex.Match(href, @"\/cg\/idol\/detail\/(?<n>\d+)$");
+                if (int.TryParse(url.Success ? url.Groups["n"].Value : href.Split('=').Last(), out id) && ng.Success && kg.Success)
                 {
                     idols.Add(new Idol()
                     {
@@ -90,8 +91,13 @@ namespace Shipwreck.ImasCGImages.Models
             }
 
             var imgs = new List<IdolImage>();
-            foreach (var a in doc.DocumentNode.Descendants("a").Where(a => a.GetAttributeValue("class", "") == "swap-card"))
+            foreach (var a in doc.DocumentNode.Descendants("a"))
             {
+                if (a.GetAttributeValue("class", "") != "swap-card")
+                {
+                    continue;
+                }
+
                 var div = a.ParentNode.ParentNode;
 
                 var inftable = div.Descendants("table").Where(_ => _.GetAttributeValue("class", "") == "bcinf").FirstOrDefault(_ => _.Descendants("th").Any(h => h.InnerText.Contains("レア度")));
@@ -106,6 +112,12 @@ namespace Shipwreck.ImasCGImages.Models
                     Headline = div.Descendants("h2").FirstOrDefault(_ => _.GetAttributeValue("class", "") == "headline")?.InnerText?.Trim(),
                     Hash = a.GetAttributeValue("href", "").Split('=').Last(),
                 };
+
+                var hlm = Regex.Match(img.Headline, @"\s+\(\d+年\d+月\d+日公開\)$");
+                if (hlm.Success)
+                {
+                    img.Headline = img.Headline.Substring(img.Headline.Length - hlm.Length);
+                }
 
                 img.Rarity = GetRarity(tr1[0].InnerText, img.Headline, errorHandler);
                 img.Type = GetType(tr1[1].InnerText, errorHandler);

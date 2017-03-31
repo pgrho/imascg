@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="IdolListUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://gamedb.squares.net/idolmaster/?name=&amp;attr=all&amp;age=all&amp;height=all&amp;weight=all&amp;blood=all&amp;arm=all</Value>
+      <Value Profile="(Default)">http://imas.gamedbs.jp/cg/</Value>
     </Setting>
     <Setting Name="IdolImageUrlFormat" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://gamedb.squares.net/idolmaster/idol.php?id={0}</Value>
+      <Value Profile="(Default)">http://imas.gamedbs.jp/cg/idol/detail/{0}</Value>
     </Setting>
   </Settings>
 </SettingsFile>

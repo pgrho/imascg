@@ -25,8 +25,7 @@ namespace Shipwreck.ImasCGImages.Models.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://gamedb.squares.net/idolmaster/?name=&attr=all&age=all&height=all&weight=al" +
-            "l&blood=all&arm=all")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://imas.gamedbs.jp/cg/")]
         public string IdolListUrl {
             get {
                 return ((string)(this["IdolListUrl"]));
@@ -35,7 +34,7 @@ namespace Shipwreck.ImasCGImages.Models.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://gamedb.squares.net/idolmaster/idol.php?id={0}")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://imas.gamedbs.jp/cg/idol/detail/{0}")]
         public string IdolImageUrlFormat {
             get {
                 return ((string)(this["IdolImageUrlFormat"]));

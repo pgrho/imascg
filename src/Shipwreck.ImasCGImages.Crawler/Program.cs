@@ -54,6 +54,9 @@ namespace Shipwreck.ImasCGImages.Crawler
                 Console.Write("Wait[ms] (default:{0}):", wait);
                 wait = int.Parse(ReadLine() ?? wait.ToString());
 
+                Console.Write("Update List (default:{0}):", Settings.Default.ForceUpdateList);
+                Settings.Default.ForceUpdateList = Regex.IsMatch(ReadLine() ?? Settings.Default.ForceUpdateList.ToString(), "^(t|true|y|yes|1)$", RegexOptions.IgnoreCase);
+
                 Settings.Default.ConnectionString = cs;
                 Settings.Default.CommandTimeout = timeout;
                 Settings.Default.RequestWait = wait;
@@ -118,7 +121,7 @@ namespace Shipwreck.ImasCGImages.Crawler
         }
 
         private readonly string _ConnectionString;
-        private readonly bool _ForceUpdateImages = false;
+        private readonly bool _ForceUpdateImages;
         private readonly int _Timeout = 120;
         private readonly int Wait = 500;
 
@@ -126,6 +129,7 @@ namespace Shipwreck.ImasCGImages.Crawler
         {
             this._ConnectionString = connectionString;
             _Timeout = timeout;
+            _ForceUpdateImages = Settings.Default.ForceUpdateList;
             Wait = wait;
         }
 
@@ -164,7 +168,12 @@ namespace Shipwreck.ImasCGImages.Crawler
             }
             // TODO:nullのデータを消してリトライ
 
-            var types = new[] { IdolImageDataType.Framed, IdolImageDataType.Frameless, IdolImageDataType.Quest, IdolImageDataType.LS, IdolImageDataType.XS };
+            var types = new[] {
+                IdolImageDataType.Framed,
+                IdolImageDataType.Frameless,
+                IdolImageDataType.Quest,
+                IdolImageDataType.LS,
+                IdolImageDataType.XS };
 
             var tc = await GetUnaquiredImageCountAsync(types);
             var dc = 0;
@@ -181,9 +190,11 @@ namespace Shipwreck.ImasCGImages.Crawler
                     Console.WriteLine("[{0}/{1}]{2}の{3}画像をダウンロードしています。", dc, tc, img.Headline, t);
                     var d = await GetImageDataAsync(img.Hash, t);
 
-                    Console.WriteLine("[{0}/{1}]{2}の{3}画像を保存しています。", dc, tc, img.Headline, t);
-                    await InsertImageDataAsync(img.Hash, t, d);
-
+                    if (d != null && d.Length > 2 && d[0] == 0xff && d[1] == 0xd8)
+                    {
+                        Console.WriteLine("[{0}/{1}]{2}の{3}画像を保存しています。", dc, tc, img.Headline, t);
+                        await InsertImageDataAsync(img.Hash, t, d);
+                    }
                     await Task.Delay(Wait);
                 }
             }
@@ -259,12 +270,11 @@ namespace Shipwreck.ImasCGImages.Crawler
 
         private async Task<IdolImage> GetUnaquiredImageAsync(IdolImageDataType[] types)
         {
-            var c = types.Length;
             using (var db = new ImasCDDbContext(_ConnectionString))
             {
                 db.Database.CommandTimeout = _Timeout;
                 return await db.IdolImages.Include(_ => _.Idol)
-                                .FirstOrDefaultAsync(_ => db.IdolImageData.Count(h => h.Hash == _.Hash) < c);
+                                .FirstOrDefaultAsync(_ => !db.IdolImageData.Any(h => h.Hash == _.Hash && h.Type == IdolImageDataType.Framed));
             }
         }
 
@@ -285,6 +295,7 @@ namespace Shipwreck.ImasCGImages.Crawler
             {
                 try
                 {
+                    wc.Headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:52.0) Gecko/20100101 Firefox/52.0";
                     return await wc.DownloadDataTaskAsync(u);
                 }
                 catch

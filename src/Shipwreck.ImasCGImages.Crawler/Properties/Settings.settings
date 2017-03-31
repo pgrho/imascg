@@ -6,13 +6,16 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="IdolListUrl" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://gamedb.squares.net/idolmaster/?name=&amp;attr=all&amp;age=all&amp;height=all&amp;weight=all&amp;blood=all&amp;arm=all</Value>
+      <Value Profile="(Default)">http://imas.gamedbs.jp/cg/</Value>
     </Setting>
     <Setting Name="CommandTimeout" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">120</Value>
     </Setting>
     <Setting Name="RequestWait" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">500</Value>
+    </Setting>
+    <Setting Name="ForceUpdateList" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>
